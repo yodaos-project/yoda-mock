@@ -1,4 +1,4 @@
-var AppRuntime = require('./mock-app-runtime')
+var AppRuntime = require('./lib/mock-app-runtime')
 
 /**
  * @module @yoda/mock
