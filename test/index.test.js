@@ -1,5 +1,5 @@
 var test = require('tape')
-var Mock = require('@yoda/mock')
+var Mock = require('../')
 
 test('should mock app runtime', t => {
   var rt
