@@ -1,0 +1,45 @@
+#!/usr/bin/env bash -i
+set -e
+
+help="
+Usage:
+  -p <pattern>        test file pattern, defaults to '$pattern'
+  --reporter <name>   test result reporter, no reporter by default
+
+Example:
+  $ ./tools/test --reporter tap-nyan --pattern '**/*.test.js'
+"
+
+patternPrefix='/data/workspace/test/'
+pattern="**/*.test.js"
+reporter="cat"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -p)
+      pattern="$2"
+      shift
+      ;;
+    --reporter)
+      reporter="./node_modules/.bin/$2"
+      shift
+      ;;
+    --help)
+      printf "$help"
+      exit
+      ;;
+    -h)
+      printf "$help"
+      exit
+      ;;
+    --*)
+      echo "Illegal option $1"
+      ;;
+  esac
+  shift $(( $# > 0 ? 1 : 0 ))
+done
+
+scripts="
+iotjs /usr/lib/node_modules/tape/bin/tape.js '$patternPrefix$pattern'
+"
+
+adb shell $scripts | $reporter

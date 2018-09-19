@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -e
+help="
+Usage:
+  -t Includes tests.
+  -s Select which device to be installed on if multiple devices presents.
+
+Install @yoda/mock to devices.
+
+Example:
+  $ ./tools/install
+  $ ./tools/install -s 0502031835000257
+"
+
+test='NO'
+sn=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -t)
+      test='YES'
+      ;;
+    -s)
+      sn="$2"
+      shift
+      ;;
+    -h|--help)
+      printf "$help"
+      exit
+      ;;
+    --*)
+      echo "Illegal option $1"
+      ;;
+  esac
+  shift $(( $# > 0 ? 1 : 0 ))
+done
+
+function shell() {
+  if test "$sn" != ""; then
+    adb -s "$sn" shell $1
+  else
+    adb shell $1
+  fi
+}
+
+function push() {
+  echo "installing from $1 to $2"
+  if test "$sn" != ""; then
+    adb -s "$sn" push $1 $2 >/dev/null
+  else
+    adb push $1 $2 >/dev/null
+  fi
+}
+
+function install() {
+  shell "mount -o remount,rw /"
+  shell "rm -rf /usr/lib/node_modules/@yoda/mock"
+
+  shell "mkdir -p /usr/lib/node_modules/@yoda/mock"
+  push "./index.js" "/usr/lib/node_modules/@yoda/mock/"
+  push "./lib" "/usr/lib/node_modules/@yoda/mock/"
+}
+
+function install_test() {
+  push "./node_modules/tape" "/usr/lib/node_modules/"
+
+  shell "rm -rf /data/workspace/test"
+  shell "mkdir -p /data/workspace/test"
+  push "./test" "/data/workspace/test"
+}
+
+install
+
+if test $test = 'YES'; then
+  install_test
+fi
