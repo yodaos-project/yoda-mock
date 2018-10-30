@@ -11,7 +11,7 @@ test('should mock app runtime', t => {
         t.notLooseEqual(runtime.mockService, null, 'mocked runtime.mockService shall not be nil')
         t.notLooseEqual(runtime.restore, null, 'mocked runtime.restore shall not be nil')
 
-        t.strictEqual(Object.keys(runtime.loader.executors).length, 1, 'mocked app runtime shall load expected app only')
+        t.strictEqual(Object.keys(runtime.loader.appManifests).length, 1, 'mocked app runtime shall load expected app only')
 
         runtime.destruct()
         t.end()
