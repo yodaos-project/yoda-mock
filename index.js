@@ -32,6 +32,6 @@ module.exports.mockAppRuntime = mockAppRuntime
 function mockAppRuntime (app) {
   var appRuntime = new AppRuntime()
   return appRuntime.init([])
-    .then(() => appRuntime.loader.loadApp(app))
+    .then(() => appRuntime.component.appLoader.loadApp(app))
     .then(() => appRuntime)
 }
